@@ -266,7 +266,6 @@ export default {
     
   }
 }
-
 </script>
 <style>
 .tagscontainer {

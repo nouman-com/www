@@ -15,5 +15,10 @@
     "filename": "NewsList",
     "displayName": "News list",
     "createNestedRoute": true
+  },
+  {
+    "filename": "BlogList",
+    "displayName": "Blog list",
+    "createNestedRoute": true
   }
 ]
