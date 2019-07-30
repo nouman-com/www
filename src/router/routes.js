@@ -1,5 +1,5 @@
 // import app pages
-import Home from '@/app/pages/Home'
+import BlogList from '@/app/templates/BlogList'
 
 // import admin page components
 import Admin from '@/admin/pages/Admin'
@@ -15,11 +15,12 @@ import Contents from '@/admin/pages/content/contents/Contents'
 import ContentsNew from '@/admin/pages/content/contents/ContentsNew'
 import ContentsEdit from '@/admin/pages/content/contents/ContentsEdit'
 
+
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: BlogList
   },
   {
     path: '/login',
