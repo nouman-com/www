@@ -15,13 +15,7 @@ import Contents from '@/admin/pages/content/contents/Contents'
 import ContentsNew from '@/admin/pages/content/contents/ContentsNew'
 import ContentsEdit from '@/admin/pages/content/contents/ContentsEdit'
 
-
 const routes = [
-  {
-    path: '/',
-    name: 'Home',
-    component: BlogList
-  },
   {
     path: '/login',
     name: 'Login',

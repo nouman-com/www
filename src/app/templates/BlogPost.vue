@@ -10,13 +10,13 @@
             <div class="news-body">Loading...</div>
           </div>
           <div v-else class="news-preview-content">
-            <content-title :fieldClass="'news-title'" v-if="currentNews.title" :text="currentNews.title"/>
+            <content-title :fieldClass="'news-title'" v-if="currentContent.title" :text="currentContent.title"/>
             
-            <p class="date" v-text="currentNews.date"></p>
+            <p class="date" v-text="currentContent.date"></p>
             <!-- Load default image if not available -->
-            <content-image :src="currentNews.img" :fieldClass="'responsive-image'"/>
+            <content-image :src="currentContent.img" :fieldClass="'responsive-image'"/>
 
-            <content-body v-if="currentNews.body" :fieldClass="'news-body'" :body="currentNews.body"/>
+            <content-body v-if="currentContent.body" :fieldClass="'news-body'" :body="currentContent.body"/>
 
             <hr />
             <div class="share-box">
@@ -75,6 +75,7 @@
 
 <script>
 import LoadContent from './LoadContent'
+import categoryFilter from '@/admin/mixins/categoryFilter'
 import appHeader from '@/app/components/appHeader'
 import Title from '@/app/fieldTemplates/Title.vue'
 import Image from '@/app/fieldTemplates/Image.vue'
@@ -83,7 +84,7 @@ import appFooter from '@/app/components/appFooter'
 import _ from 'lodash'
 
 export default {
-  mixins: [LoadContent],
+  mixins: [LoadContent, categoryFilter],
   components: {
     appHeader,
     contentTitle: Title,
@@ -96,9 +97,6 @@ export default {
       return this.content.filter(obj => {
         return obj['.key'] === this.$route.params.id || obj.slug === this.$route.params.id
       })[0]
-    },
-    categories () {
-      return _.countBy(this.content, 'category')
     }
   },
   data () {

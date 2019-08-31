@@ -77,6 +77,7 @@ import appFooter from '@/app/components/appFooter'
 import pagination from '@/app/components/pagination'
 import { contentsRef, routesRef } from '@/admin/firebase_config/index'
 import contentFetch from '@/admin/mixins/contentFetch'
+import categoryFilter from '@/admin/mixins/categoryFilter'
 import _ from 'lodash'
 
 const stringContains = (search, stringArr) => {
@@ -88,7 +89,7 @@ const stringContains = (search, stringArr) => {
 }
 
 export default {
-  mixins: [contentFetch],
+  mixins: [contentFetch,categoryFilter],
   components: {
     appHeader,
     appFooter,
@@ -144,31 +145,6 @@ export default {
     currentPageNews () {
       return _.slice(this.filteredNews, this.filter.currentPage - 1, (this.filter.currentPage - 1) + this.perPage)
     },
-    categories () {
-      let found_categories = {}
-      this.news.forEach(news => {
-        if(_.isEmpty(found_categories)) {
-          found_categories = _.countBy(news.category.options, function(option){
-            return option
-          })
-        } else {
-          let currNewsCat =  _.countBy(news.category.options, function(option){
-            return option
-          })
-          //comparing current categories with the new posts categories and makes chages accordingly
-          Object.keys(found_categories).forEach(keyCat => {
-            Object.keys(currNewsCat).forEach(keyCurCat => {
-              if(keyCat === keyCurCat){
-                found_categories[keyCat] = found_categories[keyCat] + currNewsCat[keyCurCat]
-              } else if(!(keyCurCat in found_categories)){
-                found_categories[keyCurCat] = currNewsCat[keyCurCat]
-              }
-            })
-          })
-        }
-      })
-      return found_categories
-    },
     query () {
       return this.$route.query
     }
@@ -194,6 +170,7 @@ export default {
     },
     clearCategories () {
       this.filter.category = undefined
+      this.updateRoute()
     }
   }
 }
