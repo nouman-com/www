@@ -40,7 +40,7 @@
                 <div class="news-preview-content">
                   <h2 class="news-title" v-if="newsItem.title" v-text="newsItem.title"></h2>
                   <p v-if="newsItem.body" class="news-body" v-html="newsItem.body"></p>
-                  <router-link :to="$route.path + '/' + (newsItem.slug ? newsItem.slug : newsItem['.key'])" class="btn is-small">Read more</router-link>
+                  <router-link :to="buildURL((newsItem.slug ? newsItem.slug : newsItem['.key']))" @click.native="buildURL((newsItem.slug ? newsItem.slug : newsItem['.key']))" class="btn is-small">Read more</router-link>
                 </div>
               </div>
 
@@ -113,7 +113,8 @@ export default {
       },
       searchQuery: undefined,
       perPage: 4, // No of news per page
-      loaded: false
+      loaded: false,
+      currentRoute: ''
     }
   },
   watch: {
@@ -153,6 +154,7 @@ export default {
     this.filter.currentPage = parseInt(_.get(this.query, 'page', 1))
     this.filter.category = _.get(this.query, 'category')
     this.filter.q = _.get(this.query, 'q')
+    this.currentRoute = this.$route.path
   },
   methods: {
     search () {
@@ -171,6 +173,13 @@ export default {
     clearCategories () {
       this.filter.category = undefined
       this.updateRoute()
+    },
+    buildURL(contentID){
+      if (this.currentRoute === '/') {
+        return this.currentRoute + contentID
+      } else {
+        return this.currentRoute + '/' + contentID
+      }
     }
   }
 }
