@@ -56,7 +56,7 @@ export default {
       width: 33.33%;
       @include border-radius(5px);
       box-shadow: 0px 0px 9px 0px lightgray;
-      display: flex;
+      display:flex;
       flex-direction: column;
       justify-content: flex-end;
       p {

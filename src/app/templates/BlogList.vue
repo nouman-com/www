@@ -36,10 +36,10 @@
             </div>
             <div v-else-if="currentPageNews && currentPageNews.length > 0">
               <div v-for="newsItem in currentPageNews" :key="newsItem['.key']" class="news">
-                <img :src="newsItem.img || require('@/app/assets/img/coast.jpg')" class="responsive-image">
+                <content-image :src="newsItem.img" :fieldClass="'responsive-image'"/>
                 <div class="news-preview-content">
-                  <h2 class="news-title" v-if="newsItem.title" v-text="newsItem.title"></h2>
-                  <p v-if="newsItem.body" class="news-body" v-html="newsItem.body"></p>
+                  <content-title :fieldClass="'news-title'" v-if="newsItem.title" :text="newsItem.title"/>
+                  <content-body v-if="newsItem.body" :fieldClass="'news-body'" :body="newsItem.body"/>
                   <router-link :to="buildURL((newsItem.slug ? newsItem.slug : newsItem['.key']))" @click.native="buildURL((newsItem.slug ? newsItem.slug : newsItem['.key']))" class="btn is-small">Read more</router-link>
                 </div>
               </div>
@@ -73,6 +73,9 @@
 
 <script>
 import appHeader from '@/app/components/appHeader'
+import Body from '@/app/fieldTemplates/Body.vue'
+import Title from '@/app/fieldTemplates/Title.vue'
+import Image from '@/app/fieldTemplates/Image.vue'
 import appFooter from '@/app/components/appFooter'
 import pagination from '@/app/components/pagination'
 import { contentsRef, routesRef } from '@/admin/firebase_config/index'
@@ -82,16 +85,19 @@ import _ from 'lodash'
 
 const stringContains = (search, stringArr) => {
   let strContains = false
-   stringArr.forEach(string => {
+  stringArr.forEach(string => {
     if (string.toLowerCase().includes(search.toLowerCase())) strContains = true
-   })
-   return strContains  
+  })
+  return strContains
 }
 
 export default {
-  mixins: [contentFetch,categoryFilter],
+  mixins: [contentFetch, categoryFilter],
   components: {
     appHeader,
+    contentBody: Body,
+    contentTitle: Title,
+    contentImage: Image,
     appFooter,
     pagination
   },
@@ -131,7 +137,7 @@ export default {
       let currentRoute = this.routes.filter((route) => {
         return route.path === this.$route.path
       })[0]
-  
+
       return this.getContentsByType(currentRoute.contentType, true)
     },
     filteredNews () {
@@ -144,7 +150,19 @@ export default {
       })
     },
     currentPageNews () {
-      return _.slice(this.filteredNews, this.filter.currentPage - 1, (this.filter.currentPage - 1) + this.perPage)
+      let pageNumber = Math.floor(this.filteredNews.length / this.perPage)
+      let lastPageContentNum
+      if (this.filteredNews.length % this.perPage !== 0) {
+        lastPageContentNum = this.filteredNews.length % this.perPage
+        pageNumber += 1
+      }
+      if(this.filter.currentPage === 1) {
+        return _.slice(this.filteredNews, this.filter.currentPage - 1, ((this.filter.currentPage - 1) + this.perPage))
+      } else if (this.filter.currentPage === pageNumber && lastPageContentNum) {
+        return _.slice(this.filteredNews, ((this.filter.currentPage -1) * this.perPage), (((this.filter.currentPage -1) * this.perPage)) + lastPageContentNum)
+      } else {
+        return _.slice(this.filteredNews, (this.filter.currentPage - 1) * this.perPage, (((this.filter.currentPage - 1) * this.perPage) + this.perPage))
+      }
     },
     query () {
       return this.$route.query
@@ -174,7 +192,7 @@ export default {
       this.filter.category = undefined
       this.updateRoute()
     },
-    buildURL(contentID){
+    buildURL (contentID) {
       if (this.currentRoute === '/') {
         return this.currentRoute + contentID
       } else {
